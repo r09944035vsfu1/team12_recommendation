@@ -36,6 +36,8 @@ python 2_remap_id.py
 python train.py
 ```
 
+(以下大部分為原作者README.md內容)
+---
 
 ### 1. 论文
 Deep Interest Network for Click-Through Rate Prediction
