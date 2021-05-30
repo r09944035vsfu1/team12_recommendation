@@ -9,7 +9,7 @@ pip install tensorflow
 ```
 #### Step1: Download Dataset
 
-*   Amazon
+*   Amazon(Electronics)
 ```
 mkdir raw_data
 cd preprocess
