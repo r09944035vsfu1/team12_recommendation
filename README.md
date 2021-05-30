@@ -16,7 +16,7 @@ cd preprocess
 sh 0_download_raw.sh
 ```
 
-*   Movielens
+*   Movielens20M
 ```
 mkdir movielens_prerocess
 cd movielens_prerocess
