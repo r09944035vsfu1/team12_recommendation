@@ -66,7 +66,7 @@ class UserModel:
         for r, i in enumerate(rank_list):
             score = math.pow(r + 1, -0.8) * self.utility[u, i]
             if score > max_score and not self.selected[model_idx, u, i]:
-                max_score = max_score
+                max_score = score
                 select_item = i
         self.selected[model_idx, u, select_item] = 1
         return select_item
@@ -80,9 +80,9 @@ test = UserModel(100, 20)
 
 idx = test.add_model()
 idx = test.add_model()
-print(idx)
+# print(idx)
 
-print(test.recommend([[] * 1000], idx))
+print(test.recommend([[] for _ in range(100)], idx))
 test.new_iter()
 
 
