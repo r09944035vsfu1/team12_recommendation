@@ -75,6 +75,7 @@ class UserModel:
         rank_list = list(rank_list)
         return [self.recommend_oneuser(r_list, u, model_idx) for u, r_list in enumerate(rank_list)]
 
+
 test = UserModel(100, 20)
 
 idx = test.add_model()
@@ -83,3 +84,35 @@ print(idx)
 
 print(test.recommend([[] * 1000], idx))
 test.new_iter()
+
+
+# Sample
+"""
+###### User Modeling Initialization ######
+startup_iter = 20
+user_num = 100
+test = UserModel(user_num, startup_iter)
+idx = test.add_model() # assume there's only one model now
+
+###### start-up ######
+for t in range(startup_iter):
+    test.recommend([None]*user_num, idx) 
+    test.new_iter()
+
+###### Get data & Train Model######
+## Train
+collborative_user_item_table = test.selected[idx]
+mf = Matrix_Factorization(collborative_user_item_table)
+mf.fit()
+
+###### User Feedback(Interaction) & Retrain The Model ######
+while True:
+    ## Inference
+    top_k = 30 # assume recommend 30 items to each user
+    rank_list = mf.recommend(top_k=30) # size of rank_list : (user_num, 30)
+    test.recommend(rank_list, idx) 
+    test.new_iter()
+    ## Retrain Model
+    mf.update_table(test.selected[idx])
+    mf.fit()
+"""
