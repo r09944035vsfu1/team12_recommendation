@@ -38,20 +38,29 @@ if __name__ == '__main__':
     # ========================== Create dataset =======================
     feature_columns, behavior_list, train, val, test = create_amazon_electronic_dataset(file, embed_dim, maxlen)
     #feature_columns, behavior_list, train, val, test = create_movielens20M_dataset()
+    print("behaviour list:", behavior_list)
     train_X, train_y = train
     val_X, val_y = val
     test_X, test_y = test
     # ============================Build Model==========================
     model = DIN(feature_columns, behavior_list, att_hidden_units, ffn_hidden_units, att_activation, 
        ffn_activation, maxlen, dnn_dropout)
+
+    #model.save('din_movielens20M')
     #model = BaseModel(feature_columns, behavior_list, att_hidden_units, ffn_hidden_units, att_activation, 
     #   ffn_activation, maxlen, dnn_dropout)
     
     model.summary()
     # ============================model checkpoint======================
-    # check_path = 'save/din_weights.epoch_{epoch:04d}.val_loss_{val_loss:.4f}.ckpt'
-    # checkpoint = tf.keras.callbacks.ModelCheckpoint(check_path, save_weights_only=True,
-    #                                                 verbose=1, period=5)
+    check_path = 'amazon_din_weights_nocate.epoch_{epoch:04d}.ckpt'
+    #checkpoint = tf.keras.callbacks.ModelCheckpoint(check_path, save_weights_only=True,
+    #                                                verbose=1, period=5)
+    cp_callback = tf.keras.callbacks.ModelCheckpoint(
+        filepath=check_path, 
+        verbose=1, 
+        save_weights_only=True,
+        save_freq=1*batch_size)
+    model.save_weights(check_path.format(epoch=0))
     # =========================Compile============================
     model.compile(loss=binary_crossentropy, optimizer=Adam(learning_rate=learning_rate),
                   metrics=[AUC()])
@@ -60,9 +69,12 @@ if __name__ == '__main__':
         train_X,
         train_y,
         epochs=epochs,
-        # callbacks=[EarlyStopping(monitor='val_loss', patience=2, restore_best_weights=True)],  # checkpoint
+        #callbacks=[EarlyStopping(monitor='val_loss', patience=2, restore_best_weights=True)],  # checkpoint
+        callbacks=[cp_callback],
         validation_data=(val_X, val_y),
         batch_size=batch_size,
     )
     # ===========================Test==============================
     print('test AUC: %f' % model.evaluate(test_X, test_y, batch_size=batch_size)[1])
+
+    #model.save('din_movielens20M')

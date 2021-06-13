@@ -83,14 +83,14 @@ def create_amazon_electronic_dataset(file, embed_dim=8, maxlen=40):
 
     # feature columns
     feature_columns = [[],
-                       [sparseFeature('item_id', item_count, embed_dim),
-                        sparseFeature('cate_id', cate_count, embed_dim)]]
+                       [sparseFeature('item_id', item_count, embed_dim)]]
+                        #sparseFeature('cate_id', cate_count, embed_dim)]]
     # feature_columns = [[],
     #                    [sparseFeature('item_id', item_count, embed_dim),
     #                     ],[sparseFeature('cate_id', cate_count, embed_dim)]]
     # behavior
     #behavior_list = ['item_id']  # , 'cate_id'
-    behavior_list = ['item_id', 'cate_id']
+    behavior_list = ['item_id']#, 'cate_id']
     # shuffle
     random.shuffle(train_data)
     random.shuffle(val_data)
@@ -221,17 +221,26 @@ def create_movielens20M_dataset():
 
     train_data, val_data, test_data = [], [], []
 
-    for user_id, hist in tqdm(rating_df.groupby('userId')):
+    rating_user_group = rating_df.groupby('userId')
+    total_group = len(rating_user_group)
+    
+    ##userId_list = []
+    #for u, h in rating_user_group:
+    #    userId_list.append(u)
+
+    for each_group in tqdm(range(0,138492+1)):
+        user_id = each_group
+        hist = rating_user_group.get_group(each_group)
         pos_list = hist['movieId'].tolist()
         raw_label_list = hist['rating'].tolist()
         label_list = preprocess_target(np.array(raw_label_list,dtype='int32')).tolist()
-        def gen_neg():
-            neg = pos_list[0]
-            while neg in pos_list:
-                neg = random.randint(0, item_count - 1)
-            return neg
+        #def gen_neg():
+        #    neg = pos_list[0]
+        #    while neg in pos_list:
+        #        neg = random.randint(0, item_count - 1)
+        #    return neg
 
-        neg_list = [gen_neg() for i in range(len(pos_list))]
+        #neg_list = [gen_neg() for i in range(len(pos_list))]
         hist = []
         for i in range(1, len(pos_list)):
             hist.append([pos_list[i - 1], cate_list[pos_list[i-1]]])
@@ -245,13 +254,14 @@ def create_movielens20M_dataset():
             else:
                 train_data.append([hist_i, [pos_list[i], cate_list[pos_list[i]]], label_list[i]])
                 #train_data.append([hist_i, [neg_list[i], cate_list[neg_list[i]]], int(1-label_list[i])])
+        hist.clear()
     # feature columns
     feature_columns = [[],
-                    [sparseFeature('item_id', item_count, embed_dim),
-                        sparseFeature('cate_id', cate_count, embed_dim)]]
+                    [sparseFeature('item_id', item_count, embed_dim)]]
+                        #sparseFeature('cate_id', cate_count, embed_dim)]]
 
     # behavior
-    behavior_list = ['item_id', 'cate_id']
+    behavior_list = ['item_id']#, 'cate_id']
 
     # shuffle
     random.shuffle(train_data)
@@ -262,6 +272,11 @@ def create_movielens20M_dataset():
     train = pd.DataFrame(train_data, columns=['hist', 'target_item', 'label'])
     val = pd.DataFrame(val_data, columns=['hist', 'target_item', 'label'])
     test = pd.DataFrame(test_data, columns=['hist', 'target_item', 'label'])
+
+    #print("============Saving dataframe==============")
+    #train.to_pickle("./movielens_prerocess/train.pkl")
+    #val.to_pickle("./movielens_prerocess/val.pkl")
+    #test.to_pickle("./movielens_prerocess/test.pkl")
 
     # if no dense or sparse features, can fill with 0
     print('==================Padding===================')
