@@ -1,13 +1,16 @@
 ## Team 12 
 
-# Method1 : User Modeling
-
-
-# Method2 : MovieLens1M + User Interaction
+# Method : User Modeling
 
 ## Run
+```
+jupyter notebook Simulation.ipynb
+```
 
 
+---
+## CTR
+## Run
 ### Matching Model
 
 

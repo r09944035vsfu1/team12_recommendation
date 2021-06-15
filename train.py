@@ -23,7 +23,7 @@ os.environ['CUDA_VISIBLE_DEVICES'] = '1'
 if __name__ == '__main__':
     # ========================= Hyper Parameters =======================
     file = 'raw_data/remap.pkl'
-    maxlen = 20
+    maxlen = 40
     
     embed_dim = 8
     att_hidden_units = [80, 40]

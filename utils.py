@@ -318,43 +318,86 @@ def create_ml_1m_dataset(file, trans_score=2, embed_dim=8, test_neg_num=100):
     data_df['item_count'] = data_df.groupby('item_id')['item_id'].transform('count')
     data_df = data_df[data_df.item_count >= 5]
     # trans score
-    data_df = data_df[data_df.label >= trans_score]
+    #data_df = data_df[data_df.label >= trans_score]
     # sort
     data_df = data_df.sort_values(by=['user_id', 'Timestamp'])
+
+    # read category file
+    category_df = pd.read_csv('./movielens_prerocess/ml-1m/movies.dat', sep="::", engine='python',names=['movieId', 'title', 'genres'])
+    # keey only movieId and genres(categories of each movie)
+    category_df = category_df[['movieId','genres']]
+    # 类别只保留最后一个
+    category_df['genres'] = category_df['genres'].str.split('|')
+    category_df['genres'] = category_df['genres'].map(lambda x: x[-1])
+
+
+
+    def build_map(df, col_name):
+        """
+        制作一个映射，键为列名，值为序列数字
+        :param df: reviews_df / meta_df
+        :param col_name: 列名
+        :return: 字典，键
+        """
+        key = sorted(df[col_name].unique().tolist())
+        m = dict(zip(key, range(len(key))))
+        df[col_name] = df[col_name].map(lambda x: m[x])
+        return m, key
+    # 物品种类映射
+    cate_map, cate_key = build_map(category_df, 'genres')
+    cate_count = len(cate_map)
+
+    all_movie_list = list()
+    movie2genres = {}
+    for index, element in category_df.iterrows():
+        all_movie_list.append(int(element["movieId"]))
+        movie2genres[int(element["movieId"])] = int(element["genres"])
+
+    #cate_list = np.array(category_df['genres'], dtype='int32')
+    # 按物品id排序，并重置索引
+    #category_df = category_df.sort_values('movieId')
+    #category_df = category_df.reset_index(drop=True)
+
+
     # split dataset and negative sampling
     print('============Negative Sampling===============')
     train_data, val_data, test_data = defaultdict(list), defaultdict(list), defaultdict(list)
     item_id_max = data_df['item_id'].max()
 
     train_data, val_data, test_data = [], [], []
-    for user_id, df in tqdm(data_df[['user_id', 'item_id']].groupby('user_id')):
+    for user_id, df in tqdm(data_df[['user_id', 'item_id', 'label']].groupby('user_id')):
 
         pos_list = df['item_id'].tolist()
-        #raw_label_list = hist['rating'].tolist()
-        #label_list = preprocess_target(np.array(raw_label_list,dtype='int32')).tolist()
-        def gen_neg():
-            neg = pos_list[0]
-            while neg in set(pos_list):
-                neg = random.randint(1, item_id_max)
-            return neg
 
-        neg_list = [gen_neg() for i in range(len(pos_list))]# + test_neg_num)]
+        raw_label_list = df['label'].tolist()
+        label_list = preprocess_target(np.array(raw_label_list,dtype='int32')).tolist()
+
+        #def gen_neg():
+        #    neg = pos_list[0]
+        #    while neg in set(pos_list):
+        #        while True:
+        #            neg = random.randint(1, item_id_max)
+        #            if neg in set(all_movie_list):
+        #                break
+        #    return neg
+
+        #neg_list = [gen_neg() for i in range(len(pos_list))]# + test_neg_num)]
 
         hist = []
         for i in range(1, len(pos_list)):
             hist.append([pos_list[i - 1]])
             hist_i = hist.copy()
             if i == len(pos_list) - 1:
-                test_data.append([hist_i, [pos_list[i]], 1])
-                test_data.append([hist_i, [neg_list[i]], 0])
+                test_data.append([hist_i, [pos_list[i], movie2genres[pos_list[i]]], label_list[i]])
+                #test_data.append([hist_i, [neg_list[i], movie2genres[neg_list[i]]], 0])
                 #test_data.append([hist_i, [neg_list[i], cate_list[neg_list[i]]], int(1-label_list[i])])
             elif i == len(pos_list) - 2:
-                val_data.append([hist_i, [pos_list[i]], 1])
-                val_data.append([hist_i, [neg_list[i]], 0])
+                val_data.append([hist_i, [pos_list[i], movie2genres[pos_list[i]]], label_list[i]])
+                #val_data.append([hist_i, [neg_list[i], movie2genres[neg_list[i]]], 0])
                 #val_data.append([hist_i, [neg_list[i], cate_list[neg_list[i]]], int(1-label_list[i])])
             else:
-                train_data.append([hist_i, [pos_list[i]], 1])
-                train_data.append([hist_i, [neg_list[i]], 0])
+                train_data.append([hist_i, [pos_list[i], movie2genres[pos_list[i]]], label_list[i]])
+                #train_data.append([hist_i, [neg_list[i], movie2genres[neg_list[i]]], 0])
                 #train_data.append([hist_i, [neg_list[i], cate_list[neg_list[i]]], int(1-label_list[i])])
                 
     # feature columns
@@ -363,14 +406,13 @@ def create_ml_1m_dataset(file, trans_score=2, embed_dim=8, test_neg_num=100):
 
     # feature columns
     feature_columns = [[],
-                    [sparseFeature('item_id', item_num, embed_dim)]]
-                        #sparseFeature('cate_id', cate_count, embed_dim)]]
+                    [sparseFeature('item_id', item_num, embed_dim),sparseFeature('cate_id', cate_count, embed_dim)]]
 
     maxlen=40
 
 
     # behavior
-    behavior_list = ['item_id']#, 'cate_id']
+    behavior_list = ['item_id', 'cate_id']
 
     # shuffle
     random.shuffle(train_data)
