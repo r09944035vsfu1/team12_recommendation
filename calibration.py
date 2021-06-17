@@ -137,27 +137,7 @@ def calib_recommend(items, interacted_distr, topn, lmbda=0.5):
     update the list with the item that maximizes the utility function.
     """
     calib_reco = []
-    for _ in range(topn):
-        max_utility = -np.inf
-        for item in items:
-            if item in calib_reco:
-                continue
-
-            utility = compute_utility(calib_reco + [item], interacted_distr, lmbda)
-            if utility > max_utility:
-                max_utility = utility
-                best_item = item
-
-        calib_reco.append(best_item)
-        
-    return calib_reco
-def calib_recommend(items, interacted_distr, topn, lmbda=0.5):
-    """
-    start with an empty recommendation list,
-    loop over the topn cardinality, during each iteration
-    update the list with the item that maximizes the utility function.
-    """
-    calib_reco = []
+    calib_reco_only_item_id = []
     for _ in range(topn):
         max_utility = -np.inf
         for item in items:
@@ -169,14 +149,15 @@ def calib_recommend(items, interacted_distr, topn, lmbda=0.5):
                 max_utility = utility
                 best_item = item
         calib_reco.append(best_item)
+        calib_reco_only_item_id.append(best_item.id)
         
-    return calib_reco
+    return calib_reco_only_item_id, calib_reco 
 
 ranking_list = [Item(0,genres={"A":1.0}, score=1.33),Item(7,genres={"B":1.0}, score=1.2)]
 ideal_item_list = [Item(1,genres={"C":1.0},score=None), Item(2,genres={"B":1.0},score=None)]
 ideal_item_distribution = compute_genre_distr(ideal_item_list)
 #compute_utility(ranking_list, ideal_item_distribution)
-calibrated_list = calib_recommend(ranking_list, ideal_item_distribution, 1)
+calibrated_list, _ = calib_recommend(ranking_list, ideal_item_distribution, 1)
 
 
 
