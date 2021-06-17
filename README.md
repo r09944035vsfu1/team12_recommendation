@@ -7,6 +7,15 @@
 jupyter notebook Simulation.ipynb
 ```
 
+## Result
+### Offline lambda=0.5
+![offline05](./simulation_result/offline_05.png)
+
+### Offline lambda=0.99
+![offline099](./simulation_result/offline_099.png)
+
+### Online lambda=0.99
+![online099](./simulation_result/online_099.png)
 
 ---
 ## CTR
