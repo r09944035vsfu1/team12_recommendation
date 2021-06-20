@@ -8,17 +8,23 @@ jupyter notebook Simulation.ipynb
 ```
 
 ## Result
-### Offline lambda=0.5
-![offline05](./simulation_result/offline_05.png)
+### Jaccard(Multiple & Single train)
+#### multiple
+![jaccm](./simulation_result/multiple_train.png)
+#### single
+![jaccs](./simulation_result/single_train.png)
 
-### Offline lambda=0.99
-![offline099](./simulation_result/offline_099.png)
+### Popularity
+![popu](./simulation_result/popularity.png)
 
-### Online lambda=0.99
-![online099](./simulation_result/online_099.png)
+### Item Distribution
+#### Without Calibration
+![itemdis1](./simulation_result/calibration1.png)
+#### With Calibration
+![itemdis2](./simulation_result/calibration2.png)
 
 ---
-## CTR
+## (Deprecated)CTR
 ## Run
 ### Matching Model
 
