@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 class Item:
     """
     Data holder for our item.
@@ -124,7 +125,12 @@ def compute_utility(reco_items, interacted_distr, lmbda=0.5):
 
     total_score = 0.0
     for item in reco_items:
-        total_score += item.score
+        try:
+            total_score += item.score
+        except:
+            print("total score:", total_score)
+            print("item score:", item.score)
+            exit()
     
     # kl divergence is the lower the better, while score is
     # the higher the better so remember to negate it in the calculation
