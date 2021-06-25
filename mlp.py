@@ -36,6 +36,7 @@ class MLP(torch.nn.Module):
         rating = self.logistic(logits)
         return rating
 
+
     def init_weight(self):
         pass
 
