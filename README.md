@@ -2,7 +2,7 @@
 # Requirements
 ### 1. Python version
 Python3
-### 2.Install Pytorch
+### 2.Install Pytorch with GPU support(CUDA)
 https://pytorch.org/
 
 ### 3.Install Jupyter Notebook
