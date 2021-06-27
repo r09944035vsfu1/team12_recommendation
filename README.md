@@ -1,84 +1,56 @@
-## Team 12 
+# Group 12 
+# Requirements
+### 1. Python version
+Python3
+### 2.Install Pytorch
+https://pytorch.org/
 
-# Method : User Modeling
+### 3.Install Jupyter Notebook
+```
+pip install jupyter
+```
 
-## Run
+# How to run?
+### Repeated Training Simulation
 ```
 jupyter notebook Simulation.ipynb
 ```
 
-## Result
-### Jaccard(Multiple & Single train)
-#### multiple
-![jaccm](./simulation_result/multiple_train.png)
-#### single
-![jaccs](./simulation_result/single_train.png)
+### Single Training Simulation
+modify one line in Simulation.ipynb : set the ```single_train``` variable to True, then run the jupyter notebook again
 
-### Popularity
-![popu](./simulation_result/popularity.png)
-
-### Item Distribution
-#### Without Calibration
-![itemdis1](./simulation_result/calibration1.png)
-#### With Calibration
-![itemdis2](./simulation_result/calibration2.png)
-
----
-## (Deprecated)CTR
-## Run
-### Matching Model
+# Result (Most of results are from Repeated Training)
 
 
-### CTR
-#### Step0: Install tensorflow2.0
-```
-pip install --upgrade pip
-pip install tensorflow
-pip install tqdm
-pip install pandas
-```
-#### Step1: Download Dataset
-
-*   Amazon(Electronics)
-```
-mkdir raw_data
-cd preprocess
-sh 0_download_raw.sh
-```
-
-*   Movielens20M & 1M
-```
-mkdir movielens_prerocess
-cd movielens_prerocess
-wget https://files.grouplens.org/datasets/movielens/ml-20m.zip
-wget https://files.grouplens.org/datasets/movielens/ml-1m.zip
-unzip ml-20m.zip
-unzip ml-1m.zip
-```
-
-#### Step2 : Preprocess dataset
-```
-cd preprocess
-python 1_convert_pd.py
-python 2_remap_id.py
-```
-
-#### Step3 : Train the model
-```
-python train.py
-```
-
----
-
-## Result
-### Movielens1M Dataset (by. fengyu)
-Movielens数据集数据，最測試集的结果为：`AUC：0.897757`
+## 1.Homogenization Effect
+### **Repeated Training**
+![jaccm](./simulation_result/mul_0626_v2.png)
+### **Single Training**
+![jaccs](./simulation_result/sin_0626_v2.png)
 
 
-### Amazon-Electronic Dataset
-采用Amazon-Electronic数据集数据，最终测试集的结果为：`AUC：0.857738`
 
-### Movielens20M Dataset (by. fengyu)
-![](https://i.imgur.com/kRrSGDF.png)
+## 2.Calibrated Recommendation (**Repeated Training**)
+### Without Calibration
+![itemdis1](./simulation_result/calib1_0626_v2.png)
+### With Calibration
+![itemdis2](./simulation_result/calib2_0626_v2.png)
 
-Movielens数据集数据，最測試集的结果为：`AUC：0.718691`
+
+## 3.Item Popularity (**Repeated Training**)
+![popu](./simulation_result/popu_0626_v2.png)
+
+# References
+[1] How algorithmic confounding in recommendation systems increases homogeneity and decreases utility (RecSys '18) DOI:https://doi.org/10.1145/3240323.3240370
+
+[2] Calibrated recommendations (RecSys '18) DOI: https://doi.org/10.1145/3240323.3240372
+
+[3] Neural Collaborative Filtering WWW '17: Proceedings of the 26th International Conference on World Wide WebApril 2017 Pages 173–182https://doi.org/10.1145/3038912.3052569
+
+[4] Matrix Factorization Library : https://github.com/benfred/implicit
+
+[5] Neural Collaborative Filtering Code: https://github.com/yihong-chen/neural-collaborative-filtering
+
+[6] Calibrated Recommendations Tutorial: https://github.com/ethen8181/machine-learning
+
+[7] Advances in Bias-aware Recommendation on the Web: https://github.com/biasinrecsys/wsdm2021
