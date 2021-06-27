@@ -12,6 +12,7 @@ pip install jupyter
 
 # How to run?
 ### A. Repeated Training Simulation
+Run the Simulation.ipynb directly.
 ```
 jupyter notebook Simulation.ipynb
 ```
