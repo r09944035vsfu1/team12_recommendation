@@ -11,12 +11,12 @@ pip install jupyter
 ```
 
 # How to run?
-### Repeated Training Simulation
+### A. Repeated Training Simulation
 ```
 jupyter notebook Simulation.ipynb
 ```
 
-### Single Training Simulation
+### B. Single Training Simulation
 Please follow the steps below to modify some codes in Simulation.ipynb :  
 *   1.set the ```single_train``` variable to True  
 
