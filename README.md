@@ -17,9 +17,9 @@ jupyter notebook Simulation.ipynb
 ```
 
 ### Single Training Simulation
-Modify two parts in Simulation.ipynb : 
-1.set the ```single_train``` variable to True 
-2.uncomment the code in "single training" cell in noebook.
+Modify two parts in Simulation.ipynb :  
+1.set the ```single_train``` variable to True  
+2.uncomment the code in "single training" cell in noebook.  
 3.Then run the jupyter notebook again
 
 # Result (Most of results are from Repeated Training)
